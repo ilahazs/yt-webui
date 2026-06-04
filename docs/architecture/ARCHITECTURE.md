@@ -2,7 +2,7 @@
 
 ## Overview
 
-The application is split into a Go backend and a SvelteKit frontend. The backend owns download execution, job state, validation, persistence, and file access. The frontend, styled with Tailwind CSS and utilizing the shadcn-svelte component library (Vega style), owns user interaction, job visualization, and settings screens. Package management for the frontend is managed by `pnpm`.
+The application is split into a Go backend and a React frontend. The backend owns download execution, job state, validation, persistence, and file access. The frontend, built with React 19, TanStack Router, Zustand, shadcn/ui (new-york style), and Tailwind CSS v4, owns user interaction, job visualization, and settings screens. Package management for the frontend is managed by `pnpm`.
 
 ```txt
 Browser
@@ -63,11 +63,14 @@ security    URL validation and filesystem safety helpers
 These are recommendations, not strict requirements.
 
 ```txt
-routes      SvelteKit pages
-lib/api     API client helpers
-lib/types   shared frontend types
-components  UI components
-stores      job state, settings, and realtime subscriptions
+routes          TanStack Router file-based pages
+components/ui   shadcn/ui base components
+components      feature-specific UI components
+hooks           custom React hooks (probe, SSE events)
+store           Zustand stores (job state, settings)
+lib/api         API client helpers
+lib/types       shared frontend types
+lib/utils       utility functions (cn, etc.)
 ```
 
 ## Data Flow: Probe

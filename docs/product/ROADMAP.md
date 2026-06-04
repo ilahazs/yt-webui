@@ -7,7 +7,7 @@ Focus: repository setup, starter backend, starter frontend, shared conventions.
 Deliverables:
 
 - Go backend starter.
-- SvelteKit frontend starter.
+- React frontend starter (React 19, TanStack Router, Zustand, shadcn/ui, Tailwind CSS v4).
 - Basic health check endpoint.
 - Basic frontend page that can call the backend.
 - Initial documentation.

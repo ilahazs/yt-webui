@@ -1,6 +1,6 @@
 # yt-dlp Web UI
 
-A long-term web interface for managing downloads through `yt-dlp`, built with a Go backend and a SvelteKit frontend.
+A long-term web interface for managing downloads through `yt-dlp`, built with a Go backend and a React frontend.
 
 The project aims to provide a clean self-hosted experience for probing media URLs, choosing download presets, tracking download progress, and managing completed files from a browser.
 
@@ -33,15 +33,15 @@ Later scope:
 - Advanced storage backends.
 - More detailed metrics and administration tools.
 
-## Suggested Tech Stack
+## Tech Stack
 
 - Backend: Go
-- Frontend: SvelteKit, Tailwind CSS, shadcn-svelte (Vega style)
+- Frontend: React 19, TanStack Router, Zustand, shadcn/ui, Tailwind CSS v4
 - Package Manager: `pnpm`
 - Downloader: `yt-dlp` CLI
 - Media processing: `ffmpeg`
 - Database: SQLite for the early phase
-- Realtime updates: Server-Sent Events or WebSocket
+- Realtime updates: Server-Sent Events
 - Deployment: Docker Compose for local/self-hosted usage
 
 ## Development Principles
@@ -79,7 +79,7 @@ go run main.go
 
 The backend server will start listening at `http://localhost:8080`.
 
-### 2. Start the SvelteKit Frontend Server
+### 2. Start the React Frontend Server
 
 In a new terminal window:
 
@@ -89,7 +89,7 @@ pnpm install
 pnpm run dev
 ```
 
-The SvelteKit development server will start listening at `http://localhost:5173`. Open this URL in your browser to verify it is running and communicating with the backend.
+The Vite development server will start listening at `http://localhost:5173`. Open this URL in your browser to verify it is running and communicating with the backend.
 
 ### 3. Check Prerequisites
 
