@@ -2,7 +2,7 @@
 
 ## Overview
 
-The application is split into a Go backend and a SvelteKit frontend. The backend owns download execution, job state, validation, persistence, and file access. The frontend owns user interaction, job visualization, and settings screens.
+The application is split into a Go backend and a SvelteKit frontend. The backend owns download execution, job state, validation, persistence, and file access. The frontend, styled with Tailwind CSS and utilizing the shadcn-svelte component library (Vega style), owns user interaction, job visualization, and settings screens. Package management for the frontend is managed by `pnpm`.
 
 ```txt
 Browser

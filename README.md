@@ -36,7 +36,8 @@ Later scope:
 ## Suggested Tech Stack
 
 - Backend: Go
-- Frontend: SvelteKit
+- Frontend: SvelteKit, Tailwind CSS, shadcn-svelte (Vega style)
+- Package Manager: `pnpm`
 - Downloader: `yt-dlp` CLI
 - Media processing: `ffmpeg`
 - Database: SQLite for the early phase
@@ -67,13 +68,33 @@ The exact layout may evolve. A reasonable starting point:
 
 ## Local Development
 
-Recommended early workflow:
+To run the application locally for development:
 
-1. Start the backend development server.
-2. Start the SvelteKit development server.
-3. Configure the frontend API base URL.
-4. Confirm `yt-dlp` and `ffmpeg` are available in the backend runtime.
-5. Test with a safe public media URL.
+### 1. Start the Go Backend Server
+
+```bash
+cd backend
+go run main.go
+```
+
+The backend server will start listening at `http://localhost:8080`.
+
+### 2. Start the SvelteKit Frontend Server
+
+In a new terminal window:
+
+```bash
+cd frontend
+pnpm install
+pnpm run dev
+```
+
+The SvelteKit development server will start listening at `http://localhost:5173`. Open this URL in your browser to verify it is running and communicating with the backend.
+
+### 3. Check Prerequisites
+
+Ensure that `yt-dlp` and `ffmpeg` are installed and available on your system path.
+
 
 ## License
 
