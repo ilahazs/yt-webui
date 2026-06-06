@@ -95,6 +95,8 @@ The Vite development server will start listening at `http://localhost:5173`. Ope
 
 Ensure that `yt-dlp` and `ffmpeg` are installed and available on your system path.
 
+See [docs/development/CONFIGURATION.md](file:///home/ilahazs/Development/Github/yt-webui/docs/development/CONFIGURATION.md) for details on customizing directories, ports, and binary paths using environment variables.
+
 
 ## License
 

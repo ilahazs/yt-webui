@@ -17,13 +17,45 @@ async function request<T>(
   input: RequestInfo,
   init?: RequestInit,
 ): Promise<ApiResponse<T>> {
-  const res = await fetch(input, {
-    headers: { 'Content-Type': 'application/json', ...init?.headers },
-    ...init,
-  });
+  try {
+    const res = await fetch(input, {
+      headers: { 'Content-Type': 'application/json', ...init?.headers },
+      ...init,
+    });
 
-  const json = (await res.json()) as ApiResponse<T>;
-  return json;
+    let json: any;
+    try {
+      json = await res.json();
+    } catch (parseErr) {
+      return {
+        data: null,
+        error: {
+          code: 'parse_error',
+          message: `Failed to parse response as JSON. Status: ${res.status} ${res.statusText}`,
+        },
+      };
+    }
+
+    if (json && typeof json === 'object' && ('data' in json || 'error' in json)) {
+      return json as ApiResponse<T>;
+    }
+
+    return {
+      data: null,
+      error: {
+        code: 'invalid_response_format',
+        message: 'Server response does not match the API contract.',
+      },
+    };
+  } catch (netErr: any) {
+    return {
+      data: null,
+      error: {
+        code: 'network_error',
+        message: netErr instanceof Error ? netErr.message : 'A network error occurred.',
+      },
+    };
+  }
 }
 
 function post<T>(path: string, body: unknown): Promise<ApiResponse<T>> {
