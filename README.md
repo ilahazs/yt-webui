@@ -1,6 +1,8 @@
-# yt-dlp Web UI
+# Youtube Downloader - Web UI
 
-A long-term web interface for managing downloads through `yt-dlp`, built with a Go backend and a React frontend.
+<img width="1903" height="1024" alt="image" src="https://github.com/user-attachments/assets/07b20150-f8e9-4662-81ec-ebb221e2aa87" />
+
+aka yt-dlp webUI is a web interface for managing downloads through `yt-dlp`, built with a Go backend and a React frontend.
 
 The project aims to provide a clean self-hosted experience for probing media URLs, choosing download presets, tracking download progress, and managing completed files from a browser.
 
