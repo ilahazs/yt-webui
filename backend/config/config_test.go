@@ -7,7 +7,7 @@ import (
 
 func TestLoadDefaults(t *testing.T) {
 	// Clear environments that could interfere
-	keysToClear := []string{"BIND_ADDRESS", "PORT", "DATA_DIR", "DOWNLOAD_DIR", "YT_DLP_PATH", "FFMPEG_PATH"}
+	keysToClear := []string{"BIND_ADDRESS", "PORT", "DATA_DIR", "DOWNLOAD_DIR", "YT_DLP_PATH", "FFMPEG_PATH", "DB_PATH"}
 	origEnv := make(map[string]string)
 	for _, key := range keysToClear {
 		if val, exists := os.LookupEnv(key); exists {
@@ -38,10 +38,14 @@ func TestLoadDefaults(t *testing.T) {
 	if cfg.FfmpegPath != "ffmpeg" {
 		t.Errorf("expected FfmpegPath to be 'ffmpeg', got %s", cfg.FfmpegPath)
 	}
+	expectedDBPath := "data/yt-webui.db"
+	if cfg.DBPath != expectedDBPath {
+		t.Errorf("expected DBPath to be '%s', got %s", expectedDBPath, cfg.DBPath)
+	}
 }
 
 func TestLoadCustomEnv(t *testing.T) {
-	keysToClear := []string{"BIND_ADDRESS", "PORT", "DATA_DIR", "DOWNLOAD_DIR", "YT_DLP_PATH", "FFMPEG_PATH"}
+	keysToClear := []string{"BIND_ADDRESS", "PORT", "DATA_DIR", "DOWNLOAD_DIR", "YT_DLP_PATH", "FFMPEG_PATH", "DB_PATH"}
 	origEnv := make(map[string]string)
 	for _, key := range keysToClear {
 		if val, exists := os.LookupEnv(key); exists {
@@ -63,6 +67,7 @@ func TestLoadCustomEnv(t *testing.T) {
 	os.Setenv("DOWNLOAD_DIR", "/tmp/downloads")
 	os.Setenv("YT_DLP_PATH", "/usr/local/bin/yt-dlp")
 	os.Setenv("FFMPEG_PATH", "/usr/local/bin/ffmpeg")
+	os.Setenv("DB_PATH", "/tmp/yt.db")
 
 	cfg := Load()
 
@@ -80,6 +85,9 @@ func TestLoadCustomEnv(t *testing.T) {
 	}
 	if cfg.FfmpegPath != "/usr/local/bin/ffmpeg" {
 		t.Errorf("expected FfmpegPath to be '/usr/local/bin/ffmpeg', got %s", cfg.FfmpegPath)
+	}
+	if cfg.DBPath != "/tmp/yt.db" {
+		t.Errorf("expected DBPath to be '/tmp/yt.db', got %s", cfg.DBPath)
 	}
 }
 

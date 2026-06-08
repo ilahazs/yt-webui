@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"path/filepath"
 )
 
 type Config struct {
@@ -10,6 +11,7 @@ type Config struct {
 	DownloadDir string
 	YtDlpPath   string
 	FfmpegPath  string
+	DBPath      string
 }
 
 // Load loads application configuration from environment variables with sane defaults.
@@ -44,11 +46,17 @@ func Load() *Config {
 		ffmpegPath = "ffmpeg"
 	}
 
+	dbPath := os.Getenv("DB_PATH")
+	if dbPath == "" {
+		dbPath = filepath.Join(dataDir, "yt-webui.db")
+	}
+
 	return &Config{
 		BindAddress: bindAddr,
 		DataDir:     dataDir,
 		DownloadDir: downloadDir,
 		YtDlpPath:   ytDlpPath,
 		FfmpegPath:  ffmpegPath,
+		DBPath:      dbPath,
 	}
 }

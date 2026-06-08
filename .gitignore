@@ -1,1 +1,14 @@
 docs/development
+
+# SQLite database files
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Local application data and downloads directories
+backend/data/
+backend/downloads/
+
+# Go build binaries
+backend/backend

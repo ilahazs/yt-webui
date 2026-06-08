@@ -7,6 +7,7 @@ import (
 
 	"github.com/ilahazs/yt-webui/backend/api"
 	"github.com/ilahazs/yt-webui/backend/config"
+	"github.com/ilahazs/yt-webui/backend/db"
 )
 
 // corsMiddleware injects CORS headers and handles preflight OPTIONS requests.
@@ -36,13 +37,24 @@ func main() {
 		log.Printf("Warning: Failed to create download directory %s: %v", cfg.DownloadDir, err)
 	}
 
-	// 3. Register handlers
+	// 3. Initialize database and apply migrations
+	database, err := db.Init(cfg)
+	if err != nil {
+		log.Fatalf("Fatal: Database initialization failed: %v", err)
+	}
+	defer func() {
+		if err := database.Close(); err != nil {
+			log.Printf("Error closing database connection: %v", err)
+		}
+	}()
+
+	// 4. Register handlers
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/health", func(w http.ResponseWriter, r *http.Request) {
 		api.HandleHealth(w, r, cfg)
 	})
 
-	// 4. Start HTTP server
+	// 5. Start HTTP server
 	log.Printf("Starting backend server on %s...", cfg.BindAddress)
 	if err := http.ListenAndServe(cfg.BindAddress, corsMiddleware(mux)); err != nil {
 		log.Fatalf("Server failed: %v", err)
