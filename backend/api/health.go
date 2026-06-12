@@ -1,17 +1,20 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"os/exec"
+	"strings"
 
 	"github.com/ilahazs/yt-webui/backend/config"
 )
 
 // DependencyInfo holds status for an external tool.
 type DependencyInfo struct {
-	Found bool   `json:"found"`
-	Path  string `json:"path,omitempty"`
-	Error string `json:"error,omitempty"`
+	Found   bool   `json:"found"`
+	Path    string `json:"path,omitempty"`
+	Version string `json:"version,omitempty"`
+	Error   string `json:"error,omitempty"`
 }
 
 // HealthData holds the main structure for the health response data field.
@@ -27,8 +30,8 @@ func HandleHealth(w http.ResponseWriter, r *http.Request, cfg *config.Config) {
 		return
 	}
 
-	ytDlpInfo := checkDependency(cfg.YtDlpPath)
-	ffmpegInfo := checkDependency(cfg.FfmpegPath)
+	ytDlpInfo := checkDependency(cfg.YtDlpPath, "--version")
+	ffmpegInfo := checkDependency(cfg.FfmpegPath, "-version")
 
 	status := "ok"
 	// yt-dlp is a critical dependency, degraded if not found
@@ -47,16 +50,33 @@ func HandleHealth(w http.ResponseWriter, r *http.Request, cfg *config.Config) {
 	SendSuccess(w, http.StatusOK, data)
 }
 
-func checkDependency(nameOrPath string) DependencyInfo {
+func checkDependency(nameOrPath, versionArg string) DependencyInfo {
 	path, err := exec.LookPath(nameOrPath)
 	if err != nil {
 		return DependencyInfo{
 			Found: false,
-			Error: err.Error(),
+			Error: fmt.Sprintf("executable not found in PATH: %v", err),
 		}
 	}
+
+	cmd := exec.Command(path, versionArg)
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return DependencyInfo{
+			Found: false,
+			Path:  path,
+			Error: fmt.Sprintf("failed to execute version command: %v", err),
+		}
+	}
+
+	versionStr := strings.TrimSpace(string(output))
+	if lines := strings.Split(versionStr, "\n"); len(lines) > 0 {
+		versionStr = strings.TrimSpace(lines[0])
+	}
+
 	return DependencyInfo{
-		Found: true,
-		Path:  path,
+		Found:   true,
+		Path:    path,
+		Version: versionStr,
 	}
 }

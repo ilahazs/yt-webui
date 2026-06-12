@@ -3,13 +3,24 @@ package jobs
 import (
 	"database/sql"
 	"errors"
+	"net"
 	"path/filepath"
 	"testing"
 	"time"
 
 	"github.com/ilahazs/yt-webui/backend/config"
 	"github.com/ilahazs/yt-webui/backend/db"
+	"github.com/ilahazs/yt-webui/backend/urlutil"
 )
+
+func init() {
+	urlutil.SetLookupIP(func(host string) ([]net.IP, error) {
+		if host == "example.com" {
+			return []net.IP{net.ParseIP("93.184.216.34")}, nil
+		}
+		return net.LookupIP(host)
+	})
+}
 
 func setupTestDB(t *testing.T) *sql.DB {
 	t.Helper()
@@ -308,5 +319,20 @@ func TestListJobs(t *testing.T) {
 		if list[i].ID != expectedID {
 			t.Errorf("at index %d, expected job ID %q, got %q", i, expectedID, list[i].ID)
 		}
+	}
+}
+
+func TestCreateJobInvalidURL(t *testing.T) {
+	dbConn := setupTestDB(t)
+	defer dbConn.Close()
+
+	job := &Job{
+		ID:  "job-invalid",
+		URL: "http://localhost",
+	}
+
+	err := CreateJob(dbConn, job)
+	if err == nil {
+		t.Error("expected error when creating job with localhost URL, got nil")
 	}
 }

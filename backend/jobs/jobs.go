@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"time"
+
+	"github.com/ilahazs/yt-webui/backend/urlutil"
 )
 
 // JobStatus represents the state of a download job.
@@ -47,9 +49,13 @@ func CreateJob(db *sql.DB, job *Job) error {
 	if job.URL == "" {
 		return fmt.Errorf("job URL is required")
 	}
+	if err := urlutil.ValidateURL(job.URL); err != nil {
+		return fmt.Errorf("invalid job URL: %w", err)
+	}
 	if job.Status == "" {
 		job.Status = StatusPending
 	}
+
 	if job.CreatedAt.IsZero() {
 		job.CreatedAt = time.Now()
 	}

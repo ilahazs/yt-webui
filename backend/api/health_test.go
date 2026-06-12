@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/ilahazs/yt-webui/backend/config"
@@ -11,7 +12,7 @@ import (
 
 func TestHandleHealth(t *testing.T) {
 	cfg := &config.Config{
-		YtDlpPath:  "go", // Use a command we know exists on the system
+		YtDlpPath:  "bash", // Use a command we know exists on the system and supports --version
 		FfmpegPath: "non-existent-tool-xyz-123",
 	}
 
@@ -41,7 +42,7 @@ func TestHandleHealth(t *testing.T) {
 		t.Fatalf("expected data to be map, got %T", resp.Data)
 	}
 
-	// Status should be ok since YtDlpPath is "go" (which is found)
+	// Status should be ok since YtDlpPath is "bash" (which is found)
 	statusVal := dataMap["status"]
 	if statusVal != "ok" {
 		t.Errorf("expected status 'ok', got '%v'", statusVal)
@@ -61,6 +62,14 @@ func TestHandleHealth(t *testing.T) {
 		t.Errorf("expected yt_dlp to be found, got %v", ytDlp["found"])
 	}
 
+	versionVal, ok := ytDlp["version"].(string)
+	if !ok || versionVal == "" {
+		t.Errorf("expected yt_dlp version to be non-empty string, got %T (%v)", ytDlp["version"], ytDlp["version"])
+	}
+	if !strings.Contains(strings.ToLower(versionVal), "bash") {
+		t.Errorf("expected yt_dlp version to contain 'bash', got %q", versionVal)
+	}
+
 	ffmpeg, ok := deps["ffmpeg"].(map[string]interface{})
 	if !ok {
 		t.Fatalf("expected ffmpeg to be map, got %T", deps["ffmpeg"])
@@ -69,11 +78,16 @@ func TestHandleHealth(t *testing.T) {
 	if ffmpeg["found"] != false {
 		t.Errorf("expected ffmpeg to not be found, got %v", ffmpeg["found"])
 	}
+
+	errVal, ok := ffmpeg["error"].(string)
+	if !ok || errVal == "" {
+		t.Errorf("expected ffmpeg to have non-empty error field, got %T (%v)", ffmpeg["error"], ffmpeg["error"])
+	}
 }
 
 func TestHandleHealthMethodNotAllowed(t *testing.T) {
 	cfg := &config.Config{
-		YtDlpPath:  "go",
+		YtDlpPath:  "bash",
 		FfmpegPath: "ffmpeg",
 	}
 
